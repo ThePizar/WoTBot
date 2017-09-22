@@ -15,7 +15,6 @@ axios.post('https://slack.com/api/rtm.connect', qs.stringify({token: key})).then
     
     socket.on('message', (json) => {
       let data = JSON.parse(json);
-      //console.log(data);
       if (data.type === 'message') {
         let text = data.text || '';
         let say = 'wotbot say';
@@ -55,7 +54,6 @@ axios.post('https://slack.com/api/rtm.connect', qs.stringify({token: key})).then
             socket.send(JSON.stringify(slack));
           });
         }
-        //https://api.worldoftanks.com/wot/account/list/?application_id=25197ff770476528cf3f98c4715287bf&type=exact&search=Pizar
       }
     });
   }

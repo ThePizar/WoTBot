@@ -5,20 +5,20 @@ class Cache {
   }
   
   add (key, value) {
-    if (key instanceof String) {
+    if (typeof key === 'string') {
       this.cache[key] = value;
     }
     else {
-      console.log(key, 'is not a string')
+      console.log(key, 'is not a string (add)')
     }
   }
   
   get (key) {
-    if (key instanceof String) {
+    if (typeof key === 'string') {
       return this.cache[key];
     }
     else {
-      console.log(key, 'is not a string')
+      console.log(key, 'is not a string (get)')
     }
   }
   

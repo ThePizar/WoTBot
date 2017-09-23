@@ -11,6 +11,12 @@ let commands = {
       func: (str) => {
         return Promise.resolve(str);
       }
+    },
+    '_help': {
+      args: 0,
+      func: () => {
+        return Promise.resolve("Use `wotbot say` to make WoTBot talk back to you or use `player info` or `player search` to search about for players");
+      }
     }
   },
   '_player': {
@@ -22,8 +28,8 @@ let commands = {
     '_search': {
       args: 1,
       length: [1],
-      func: () => {
-        return players.searchPlayerNames.then(names => {
+      func: (input) => {
+        return players.searchPlayerNames(input).then(names => {
           let truncatedNames = names.length > 10 ? names.slice(0, 10) : names;
           return truncatedNames.join('\n');
         });
@@ -46,8 +52,10 @@ let commands = {
  */
 function run (inputStr) {
   let input = inputStr.split(' ');
-  if (config.nodeEnv === 'local' && input[0].toLowerCase() === 'local') {
-    return process(input.slice(1), commands, {});
+  if (config.nodeEnv === 'local') {
+    if (input[0].toLowerCase() === 'local') {
+      return process(input.slice(1), commands, {});
+    }
   }
   else {
     return process(input, commands, {});
@@ -64,16 +72,20 @@ function run (inputStr) {
  */
 function process (input, cmdTree, args) {
   if (cmdTree) {
-    if (cmdTree.args) {
-      let next = input.slice(0, cmdTree.length[0]); //TODO abstract over # of args and length of length
+    if (cmdTree.args !== undefined) {
+      let len = cmdTree.length ? cmdTree.length[0] : 0;
+      let next = input.slice(0, len); //TODO abstract over # of args and length of length
       if (cmdTree.func) {
+        console.log(args.last, next.join(' '));
         return cmdTree.func(next.join(' '));
       }
     }
     
     else {
-      let next = input[0].toLowerCase();
+      let next = input[0];
       if (next) {
+        next = next.toLowerCase();
+        args.last = next;
         return process(input.slice(1), cmdTree['_' + next], args);
       }
     }

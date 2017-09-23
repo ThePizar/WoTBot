@@ -1,6 +1,6 @@
 {
   "name": "wotbot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Custom Slack bot for World of Tanks clan and player information",
   "main": "index.js",
   "scripts": {

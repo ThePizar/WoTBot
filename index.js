@@ -5,6 +5,8 @@ const config = require('./config');
 const parser = require('./slack/commands');
 const players = require('./wot/players');
 
+console.log('Version: ', config.version);
+
 axios.post('https://slack.com/api/rtm.connect', qs.stringify({token: config.slackToken})).then(res =>{
   let body = res.data;
   let dest = body.url;

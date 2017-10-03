@@ -30,8 +30,14 @@ let commands = {
       length: [1],
       func: (input) => {
         return players.searchPlayerNames(input).then(names => {
+          if (name.length === 0) {
+            return "No players found";
+          }
           let truncatedNames = names.length > 10 ? names.slice(0, 10) : names;
           return truncatedNames.join('\n');
+        }).catch(err => {
+          console.log(err);
+          return "Error occurred during searching";
         });
       }
     },
@@ -39,6 +45,21 @@ let commands = {
       args: 0,
       func: () => {
         return Promise.resolve("Use `info` for a single player or use `search` to search by name");
+      }
+    },
+    '_check' : {
+      args: 1,
+      length: [1],
+      func: (input) => {
+        return players.checkTanks(input).then(tanks => {
+          if (tanks.length === 0) {
+            return "Has none of the tanks";
+          }
+          return tanks.map(tank => tank.name).join(', ')
+        }).catch(err => {
+          console.log(err);
+          return "Error occurred during checking";
+        });
       }
     }
   }
@@ -52,7 +73,7 @@ let commands = {
  */
 function run (inputStr) {
   let input = inputStr.split(' ');
-  if (config.nodeEnv === 'local') {
+  if (config.nodeEnv === 'local' && input[0]) {
     if (input[0].toLowerCase() === 'local') {
       return process(input.slice(1), commands, {});
     }
@@ -83,7 +104,7 @@ function process (input, cmdTree, args) {
     
     else {
       let next = input[0];
-      if (next) {
+      if (next && typeof next === 'string') {
         next = next.toLowerCase();
         args.last = next;
         return process(input.slice(1), cmdTree['_' + next], args);

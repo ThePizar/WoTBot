@@ -21,7 +21,7 @@ const ACCEPTABLE_TANKS = [{
   name: "Type 64"
 }, {
   id: 15137,
-  name: "T37"
+  name: "T21"
 }];
 
 module.exports = {

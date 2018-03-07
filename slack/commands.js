@@ -73,8 +73,9 @@ let commands = {
  */
 function run (inputStr) {
   let input = inputStr.split(' ');
-  if (config.nodeEnv === 'local' && input[0]) {
-    if (input[0].toLowerCase() === 'local') {
+  let first = input[0];
+  if (config.nodeEnv === 'local' && first && typeof(first) === 'string') {
+    if (first.toLowerCase() === 'local') {
       return process(input.slice(1), commands, {});
     }
   }

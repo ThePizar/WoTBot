@@ -30,7 +30,7 @@ let commands = {
       length: [1],
       func: (input) => {
         return players.searchPlayerNames(input).then(names => {
-          if (name.length === 0) {
+          if (names.length === 0) {
             return "No players found";
           }
           let truncatedNames = names.length > 10 ? names.slice(0, 10) : names;

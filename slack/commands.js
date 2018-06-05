@@ -44,7 +44,10 @@ let commands = {
     '_help': {
       args: 0,
       func: () => {
-        return Promise.resolve("Use `info` for a single player or use `search` to search by name");
+        return Promise.resolve(
+          "`player info` for a single player's clantools link\n" +
+          "`player search` to search by name\n" +
+          "`player wn8` for single player's wn8");
       }
     },
     '_check' : {
@@ -61,6 +64,29 @@ let commands = {
           return "Error occurred during checking";
         });
       }
+    },
+    // '_wn8' : { //Deactivated due to issues
+    //   args: 1,
+    //   length: [1],
+    //   func: players.wn8Of
+    // }
+  },
+  "_schedule" : {
+    "_add" : {
+      args: [2],
+      length: [1, Infinity],
+      func: (day, message) => {
+        
+      }
+    },
+    "_help" : {
+      args: 0,
+      func: () => Promise.resolve(
+        "Format for adding to schedule:      schedule add [day spelled out] [message]\n" +
+        "Format for removing from schedule:  schedule remove [day spelled out]\n" +
+        "Format for updating schedule:       schedule update [day spelled out] [new message]\n" +
+        "Format for getting schedule:        schedule get or @schedule\n" +
+        "Notes: only one scheduled event is allowed per day and bot is dumb can only plan up to week in advance. \n")
     }
   }
 };

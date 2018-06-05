@@ -1,7 +1,9 @@
 const axios = require('axios');
+const { JSDOM } = require('jsdom');
 const config = require('../config');
 const Cache = require('../utils/cache');
 const playerCache = new Cache();
+const fs = require('fs');
 
 const SEARCH_URL = 'https://api.worldoftanks.com/wot/account/list/';
 const TANKS_URL = 'https://api.worldoftanks.com/wot/account/tanks/';
@@ -29,6 +31,7 @@ module.exports = {
   searchPlayerNames,
   searchPlayers,
   clantoolsOf,
+  wn8Of,
   getTanksOf,
   checkTanks
 };
@@ -89,7 +92,7 @@ function searchPlayers (searchTerm, opts = {}) {
   }
   
   let exactParam = exact ? '&type=exact' : '';
-  let url = SEARCH_URL + `?application_id=${config.wgAppId}${exactParam}&search=${searchTerm}`;
+  let url = `${SEARCH_URL}?application_id=${config.wgAppId}${exactParam}&search=${searchTerm}`;
   return axios.get(url).then(res => {
     let body = res.data;
     if (body.status === 'ok') { //WTF WG
@@ -121,7 +124,37 @@ function searchPlayers (searchTerm, opts = {}) {
  * @returns {String}
  */
 function clantoolsOf (playerId) {
-  return CT_PLAYER_URL + `?id=${playerId}`;
+  return `${CT_PLAYER_URL}?id=${playerId}`;
+}
+
+/**
+ * Returns the wn8 of the player
+ *
+ * @param name {String} name of the player
+ * @returns {Promise<Number>} the wn8 of the player
+ */
+function wn8Of (name) {
+  return playerInfoLink(name).then(url => {
+    console.log(`Getting dom for ${name}`);
+    return JSDOM.fromURL(url, {
+      pretendToBeVisual: true,
+      resources: "usable",
+      runScripts: "dangerously"
+    })
+  }).then(dom => {
+    console.log(`Got dom for ${name}`);
+    return new Promise(resolve => {
+      fs.writeFileSync('./sample.html', dom.window.document.body.innerHTML);
+      setTimeout(() => {
+        const doc = dom.window.document;
+        const wn8 = doc.querySelector("#avg_wn8").innerHTML;
+        //Value is not loaded
+        console.log(wn8);
+        dom.window.close();
+        resolve("1000");
+      }, 2000);
+    })
+  })
 }
 
 /**

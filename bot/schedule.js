@@ -8,13 +8,13 @@ if (!fs.existsSync(SCHEDULE)) {
 }
 
 /**
- * Represents times of future days
+ * Represents times of future days with a message
  */
 class Schedule {
   constructor () {
     /**
      * The times stored
-     * @type {[Moment]}
+     * @type {[{time: Moment, message: String}]}
      */
     this._times = [];
   }
@@ -22,16 +22,17 @@ class Schedule {
   /**
    * Adds the time if possible. Rejects if there already exists that date.
    *
-   * @param time
+   * @param {Moment} time
+   * @param {String} message
    * @returns {Promise<Number>}
    */
-  addTime (time) {
+  addTime (time, message) {
     return this.cleanUp().then(() => {
       const emptyDay = this.times.every(entry => {
-        return entry.diff(time, "days") !== 0;
+        return entry.time.diff(time, "days") !== 0;
       });
       if (emptyDay) {
-        this.times.push(time);
+        this.times.push({time, message});
       }
       else {
         return Promise.reject("Day already has assigned time!")
@@ -43,16 +44,17 @@ class Schedule {
   /**
    * Updates the time. or adds if it doesn't exist yet
    *
-   * @param time
+   * @param {Moment} time
+   * @param {String} message
    * @returns {Promise}
    */
-  updateTime (time) {
+  updateTime (time, message) {
     return this.cleanUp().then(() => {
       const idx = this.times.indexOf(entry => {
-        return entry.diff(time, "days") !== 0;
+        return entry.time.diff(time, "days") !== 0;
       });
       if (idx === -1) {
-        this.times.push(time);
+        this.times.push({time, message});
         return undefined;
       }
       else {
@@ -75,7 +77,9 @@ class Schedule {
   cleanUp() {
     const invalid = this.times.filter(expired);
     const valid = this.times.filter(valid);
-    this._times = valid.sort(diffTime);
+    this._times = valid.sort((a, b) => {
+      diffTime(a.time, b.time);
+    });
     //TODO update file
     return Promise.resolve(this.times.length);
   }

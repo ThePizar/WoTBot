@@ -3,6 +3,10 @@ const config = require('../config');
 
 module.exports = run;
 
+function notSupported () {
+  return Promise.resolve('Action is not currently supported');
+}
+
 let commands = {
   '_wotbot': {
     '_say': {
@@ -73,11 +77,29 @@ let commands = {
   },
   "_schedule" : {
     "_add" : {
-      args: [2],
+      args: 2,
       length: [1, Infinity],
       func: (day, message) => {
-        
+        return notSupported();
       }
+    },
+    "_remove" : {
+      args: 1,
+      length: [1],
+      func: (day) => {
+        return notSupported();
+      }
+    },
+    "_update" : {
+      args: 2,
+      length: [1, Infinity],
+      func: (day, message) => {
+        return notSupported();
+      }
+    },
+    "_get" : {
+      args: 0,
+      func: notSupported
     },
     "_help" : {
       args: 0,
